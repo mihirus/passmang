@@ -1,0 +1,64 @@
+#!/bin/bash
+filepath="ltwrd_test"  
+
+
+if [[ $# -eq 1 ]] && [[ $1 == "encrypt" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      ./passmang_core encrypt $filepath $masterpass 
+elif [[ $# -eq 1 ]] && [[ $1 == "decrypt" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      ./passmang_core decrypt $filepath $masterpass 
+elif [[ $# -eq 2 ]] && [[ $1 == "get" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      printf "Entered\n"
+      get_output=$(./passmang_core get $filepath $masterpass $2)
+      printf $get_output|xclip -selection c
+elif [[ $# -eq 2 ]] && [[ $1 == "del" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      ./passmang_core del $filepath $masterpass $2
+elif [[ $# -eq 3 ]] && [[ $1 == "add" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      ./passmang_core add $filepath $masterpass $2 $3
+elif [[ $# -eq 3 ]] && [[ $1 == "mod" ]]; 
+then 
+      read -sp "Masterpass: " masterpass
+      ./passmang_core mod $filepath $masterpass $2 $3
+else
+      cat << EOF
+      * Setup instructions:
+      * 0) Install xclip with 
+      *     - $ sudo apt update
+      *     - $ sudo apt install xclip
+      * 1) Copy passmang, passmang_core, pass_file to /usr/local/bin/passmang/
+      *     - passmang is entry program (this file)
+      *     - passmang_core is C++ executable
+      *     - pass_file is arbitrarily named file with properly formatted key - pass pairs or empty
+      * 2) Execute $ passmang encrypt $ and enter password. Make sure you remember your password! Plaintext pass_file will be deleted. 
+      * 
+      * Other information: 
+      * If for any reason you need to decrypt your file, execute command 2) below and your text file will show up as pass_file_1
+      * 
+      * Command Functionality:
+      * 1) Encrypting a plaintext file (asks for masterpass)
+      * 2) Decrypting an encrypted file (asks for filepath, masterpass)\n
+      * 3) Getting a key-pass entry from a file (asks for filepath, masterpass, key)
+      * 4) Deleting a key-pass entry from a file (asks for filepath, masterpass, key)\n
+      * 5) Editing a key-pass entry from a file (asks for filepath, masterpass, key, password)\n
+      * 6) Adding a key-pass entry to a file (asks for filepath, masterpass, key, password\n
+      * 
+      * Commands: 
+      * 1) passmang encrypt 
+      * 2) passmang decrypt
+      * 3) passmang get key
+      * 4) passmang del key
+      * 5) passmang mod key password
+      * 6) passmang add key password
+      * After each command you will be prompted for the master password. 
+EOF
+
+fi
