@@ -264,22 +264,22 @@ int main(int argc, char* argv[]){
         CryptoPP::byte iv[AES::BLOCKSIZE];
         prng.GenerateBlock(iv, sizeof(iv));
         string_to_file(filepath+"_iv", (const char *)iv);     
-        string_to_file(filepath+"_enc", plain_to_cipher(file_to_string(filepath), password, iv)); 
+        string_to_file(filepath+"_enc", plain_to_cipher(file_to_string(filepath), masterpass, iv)); 
     }
     if(argc==4 && string(argv[1])=="decrypt"){
         // cout << "Command: decrypt" << endl; 
-        string_to_file(filepath+"_1", cipher_to_plain(file_to_string(filepath+"_enc"), password, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()));  
+        string_to_file(filepath+"_1", cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()));  
     }
     if(argc==5 && string(argv[1])=="get"){
         // cout << "Command: get" << endl; 
-        cout << get_entry(cipher_to_plain(file_to_string(filepath+"_enc"), password, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4]); 
+        cout << get_entry(cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4]); 
     } 
     if(argc==5 && string(argv[1])=="del"){
         // cout << "Command: del" << endl;
         AutoSeededRandomPool prng;
         CryptoPP::byte iv[AES::BLOCKSIZE];
         prng.GenerateBlock(iv, sizeof(iv));
-        string_to_file(filepath+"_enc", plain_to_cipher(delete_entry(cipher_to_plain(file_to_string(filepath+"_enc"), password, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4]), password, iv));       
+        string_to_file(filepath+"_enc", plain_to_cipher(delete_entry(cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4]), masterpass, iv));       
         string_to_file(filepath+"_iv", (const char *)iv);     
     } 
     if(argc==6 && string(argv[1])=="add"){
@@ -287,7 +287,7 @@ int main(int argc, char* argv[]){
         AutoSeededRandomPool prng;
         CryptoPP::byte iv[AES::BLOCKSIZE];
         prng.GenerateBlock(iv, sizeof(iv));
-        string_to_file(filepath+"_enc", plain_to_cipher(add_entry(cipher_to_plain(file_to_string(filepath+"_enc"), password, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4], argv[5]), password, iv)); 
+        string_to_file(filepath+"_enc", plain_to_cipher(add_entry(cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4], argv[5]), masterpass, iv)); 
         string_to_file(filepath+"_iv", (const char *)iv);     
     } 
     if(argc==6 && string(argv[1])=="mod"){
@@ -295,9 +295,10 @@ int main(int argc, char* argv[]){
         AutoSeededRandomPool prng;
         CryptoPP::byte iv[AES::BLOCKSIZE];
         prng.GenerateBlock(iv, sizeof(iv));
-        string_to_file(filepath+"_enc", plain_to_cipher(edit_entry(cipher_to_plain(file_to_string(filepath+"_enc"), password, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4], argv[5]),password,iv)); 
+        string_to_file(filepath+"_enc", plain_to_cipher(edit_entry(cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4], argv[5]),masterpass,iv)); 
         string_to_file(filepath+"_iv", (const char *)iv);   
-    } 
+    }
+    masterpass = ""; 
 }
 
 
