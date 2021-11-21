@@ -1,0 +1,35 @@
+SHELL := /bin/bash
+filename=filepass
+
+build: 
+	g++ -DNDEBUG -g3 -O2 -Wall -Wextra -o passmang_core main.cpp -l:libcryptopp.a
+
+deploy_bin: 
+	sudo cp passmang_core /usr/local/bin/
+	sudo cp passmang /usr/local/bin
+
+deploy_filestructure: 
+	sudo mkdir -p /usr/local/share/passmang 
+	sudo mkdir -p /etc/passmang 
+
+deploy_passfile: 
+	sudo touch /usr/local/share/passmang/$(filename)
+
+deploy_cfg: 
+	@echo -e "#!/bin/bash" >> passmang_config.sh
+	@echo -e "binpath=/usr/local/bin/passmang_core" >> passmang_config.sh
+	@echo -e "filename=$(filename)" >> passmang_config.sh
+	@echo -e "filepath=/usr/local/share/passmang/$(filename)" >> passmang_config.sh
+	sudo cp passmang_config.sh /etc/passmang/
+
+install: deploy_filestructure deploy_bin deploy_cfg deploy_passfile
+	sudo passmang encrypt 
+	sudo rm /usr/local/share/passmang/$(filename)
+
+uninstall: 
+	@read -rp "Last chance to Ctrl-C before passmang and your passwords are gone!" >> temp
+	@rm passmang_config.sh
+	sudo rm -r /usr/local/share/passmang
+	sudo rm /usr/local/bin/passmang
+	sudo rm /usr/local/bin/passmang_core
+	sudo rm -r /etc/passmang

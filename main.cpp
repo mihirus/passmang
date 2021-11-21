@@ -80,7 +80,7 @@ string plain_to_cipher(string plaintext, string password,  CryptoPP::byte * iv){
     }
     catch (const CryptoPP::Exception &e)
     {
-        cerr << e.what() << endl;
+        cerr << "plain_to_cipher failed ->" << e.what() << endl;
         exit(1);
     }
 
@@ -126,7 +126,7 @@ string cipher_to_plain(string ciphertext, string password, CryptoPP::byte * iv){
     }
     catch (const CryptoPP::Exception &e)
     {
-        cerr << e.what() << endl;
+        cerr << "cipher_to_plain failed ->" << e.what() << endl;
         exit(1);
     }
 
@@ -163,12 +163,14 @@ string get_entry(string pstr, string key){
     else{
         for(auto it = begin(pstr); it != end(pstr); ++it){
             temp += *it; 
-            if(*it == '\n'){
+            if(*it == char(10)){
                 // cout << temp.find(key) << endl; 
                 if(temp.find(key) == 0 && temp.find(" - ") == key.size()){
                     //key matches this line 
                     assert(temp.size()-1 > key.size()+3); // Make sure password exists, aka entry is formed correctly 
-                    return temp.substr(key.size()+3,(temp.size()-1)-(key.size()+3)); //-1 is for the newline
+                    temp = temp.substr(key.size()+3, ((temp.size()-2)-(key.size()+3)));  
+                    // cout << "Password: " << temp << " Size: " << temp.size() << endl; 
+                    return temp; //-1 is for the newline
                 }
                 temp = ""; 
             }
@@ -182,15 +184,17 @@ string get_entry(string pstr, string key){
 
 string add_entry(string pstr, string key, string value){
     // If passed in an empty pstr, return pstr 
-    if(pstr==""){
-        return pstr; 
-    }
+    // if(pstr==""){
+    //     return pstr; 
+    // }
     // If entry already exists, return pstr 
     if(get_entry(pstr, key).size() != 0){
         return pstr; 
     }
     // Otherwise simply add key - value to end of pstr
-    return(pstr + key + " - " + value + "\n"); 
+    string new_pstr = pstr+key+" - "+value+char(13)+char(10); 
+    // cout << new_pstr;
+    return new_pstr; 
 }
 
 string edit_entry(string pstr, string key, string value){
@@ -207,7 +211,7 @@ string delete_entry(string pstr, string key){
         // cout << "Segment 1" << segment1 << endl; 
         string pstr_minus_segment1 = pstr.substr(pstr.find(key), pstr.size());  
         // cout << "Pstr minus segment 1" << pstr_minus_segment1 << endl; 
-        string segment2 = pstr_minus_segment1.substr(pstr_minus_segment1.find('\n')+1, pstr_minus_segment1.size()); 
+        string segment2 = pstr_minus_segment1.substr(pstr_minus_segment1.find(0xD)+2, pstr_minus_segment1.size()); 
         // cout << "Segment 2" << segment2 << endl; 
         string modified = segment1 + segment2; 
         // cout << "Modified string" << modified << endl; 
@@ -258,6 +262,7 @@ int main(int argc, char* argv[]){
         filepath = argv[2]; 
         masterpass = argv[3]; 
     }
+    
     if(argc==4 && string(argv[1])=="encrypt"){ 
         cout << "Command: encrypt" << endl; 
         AutoSeededRandomPool prng;
@@ -271,9 +276,10 @@ int main(int argc, char* argv[]){
         string_to_file(filepath+"_1", cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()));  
     }
     if(argc==5 && string(argv[1])=="get"){
-        // cout << "Command: get" << endl; 
         cout << get_entry(cipher_to_plain(file_to_string(filepath+"_enc"), masterpass, (CryptoPP::byte *)file_to_string(filepath+"_iv").data()), argv[4]); 
-    } 
+
+    }
+    
     if(argc==5 && string(argv[1])=="del"){
         // cout << "Command: del" << endl;
         AutoSeededRandomPool prng;
@@ -310,28 +316,15 @@ int main(int argc, char* argv[]){
 
 /***
  * 
- * Todos: 
- * Implement delete entry function - done
- * Implement edit entry function - done 
- * Get entry drops password into clipboard (probably in bash program)
+ * Todos/bugs: 
+ * Done - Implement delete entry function
+ * Done - Implement edit entry function 
+ * Done - Get entry drops password into clipboard (probably in bash program)
  * Implement clear clipboard function (probably in the bash program)
  * Add desktop shortcut so you can super+passmang (maybe not necessary)
- * Entering part of a key for "get" command results in malformed password, since it still sees the key in the string - done
+ * Done - Entering part of a key for "get" command results in malformed password, since it still sees the key in the string
+ * Done - Windows newline char encoding is \0D\0A, whereas on Linux it is \0A. Currently test \n are \0A, but needs to be changed to \0D\0A
+ * Questionable? - 0D0A newline requires writing 0D0A too, which is not currently done. This change in add/del has caused encrypt/decrypt error. 
  * */
 
 
-    // cout << get_entry(file_to_string("ltwrd_test"),"alpha") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"beta") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"gamma") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"delta") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"epsilon") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"xyze") << endl; 
-    // cout << get_entry(file_to_string("ltwrd_test"),"") << endl; 
-
-
-
-    // cout << delete_entry(file_to_string("ltwrd_test"), "alpha") << endl; 
-    // cout << delete_entry(file_to_string("ltwrd_test"), "beta") << endl; 
-    // cout << delete_entry(file_to_string("ltwrd_test"), "gamma") << endl; 
-    // cout << delete_entry(file_to_string("ltwrd_test"), "delta") << endl; 
-    // cout << delete_entry(file_to_string("ltwrd_test"), "epsilon") << endl; 

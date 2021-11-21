@@ -1,33 +1,44 @@
 #!/bin/bash
-filepath="ltwrd_test"  
-
+source /etc/passmang/passmang_config.sh
+# filepath=/usr/local/share/passmang/ltwrd 
+# binpath=/usr/local/bin/passmang_core
 
 if [[ $# -eq 1 ]] && [[ $1 == "encrypt" ]]; 
 then 
       read -sp "Masterpass: " masterpass
-      ./passmang_core encrypt $filepath $masterpass 
+      printf "Entered\n"
+      $binpath encrypt $filepath $masterpass 
 elif [[ $# -eq 1 ]] && [[ $1 == "decrypt" ]]; 
 then 
       read -sp "Masterpass: " masterpass
-      ./passmang_core decrypt $filepath $masterpass 
+      printf "Entered\n"
+      $binpath decrypt $filepath $masterpass 
 elif [[ $# -eq 2 ]] && [[ $1 == "get" ]]; 
 then 
       read -sp "Masterpass: " masterpass
       printf "Entered\n"
-      get_output=$(./passmang_core get $filepath $masterpass $2)
-      printf $get_output|xclip -selection c
+      get_output=$($binpath get $filepath $masterpass $2)
+      if [[ ! $get_output ]]; then 
+	printf "No match!\n" 
+      else
+	printf $get_output|xclip -selection c
+      fi
+#|xclip -selection c
 elif [[ $# -eq 2 ]] && [[ $1 == "del" ]]; 
 then 
       read -sp "Masterpass: " masterpass
-      ./passmang_core del $filepath $masterpass $2
+      printf "Entered\n"
+      $binpath del $filepath $masterpass $2
 elif [[ $# -eq 3 ]] && [[ $1 == "add" ]]; 
 then 
       read -sp "Masterpass: " masterpass
-      ./passmang_core add $filepath $masterpass $2 $3
+      printf "Entered\n"
+      $binpath add $filepath $masterpass $2 $3
 elif [[ $# -eq 3 ]] && [[ $1 == "mod" ]]; 
 then 
       read -sp "Masterpass: " masterpass
-      ./passmang_core mod $filepath $masterpass $2 $3
+      printf "Entered\n"
+      $binpath mod $filepath $masterpass $2 $3
 else
       cat << EOF
       * Setup instructions:
@@ -38,7 +49,7 @@ else
       *     - passmang is entry program (this file)
       *     - passmang_core is C++ executable
       *     - pass_file is arbitrarily named file with properly formatted key - pass pairs or empty
-      * 2) Execute $ passmang encrypt $ and enter password. Make sure you remember your password! Plaintext pass_file will be deleted. 
+      * 2) Execute $ 'passmang encrypt' $ and enter password. Make sure you remember your password! Plaintext pass_file will be deleted. 
       * 
       * Other information: 
       * If for any reason you need to decrypt your file, execute command 2) below and your text file will show up as pass_file_1
