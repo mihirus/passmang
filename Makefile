@@ -1,10 +1,14 @@
 SHELL := /bin/bash
 filename=filepass
 
+dependencies: 
+	sudo apt update
+	sudo apt install xclip 
+
 build: 
 	g++ -DNDEBUG -g3 -O2 -Wall -Wextra -o passmang_core main.cpp -l:libcryptopp.a
 
-deploy_bin: 
+deploy_bin: build
 	sudo cp passmang_core /usr/local/bin/
 	sudo cp passmang /usr/local/bin
 
@@ -22,7 +26,7 @@ deploy_cfg:
 	@echo -e "filepath=/usr/local/share/passmang/$(filename)" >> passmang_config.sh
 	sudo cp passmang_config.sh /etc/passmang/
 
-install: deploy_filestructure deploy_bin deploy_cfg deploy_passfile
+install: dependencies deploy_filestructure deploy_bin deploy_cfg deploy_passfile
 	sudo passmang encrypt 
 	sudo rm /usr/local/share/passmang/$(filename)
 
