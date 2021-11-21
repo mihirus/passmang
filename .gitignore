@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Except these guys
+!.gitignore
+!Makefile
+!main.cpp
+!passmang
+!readme.md
