@@ -1,7 +1,7 @@
 ## Installation 
 - Set your desired filename at the top of the makefile. 
 - Install libcryptopp. Instructions for linux users are here: [Linux User Guide](https://www.cryptopp.com/wiki/Linux#Build_and_Install_the_Library). You can either use the apt manager, or you can download and `cd` into the library, run `make libcryptopp.a`, then `make install` for it to land in /usr/local/lib. 
-- Run `make install` (From the passmang root) 
+- Run `make install` (From the passmang root). You will be prompted for a Masterpass. This is your password to all your passwords. Don't forget it! 
 
 ## Usage
 - Run `passmang` from your command line. You should see a list of commands you can run. 

@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-filename=filepass
+filename=passfile
 
 dependencies: 
 	sudo apt update
@@ -22,9 +22,8 @@ deploy_passfile:
 deploy_cfg: 
 	@echo -e "#!/bin/bash" >> passmang_config.sh
 	@echo -e "binpath=/usr/local/bin/passmang_core" >> passmang_config.sh
-	@echo -e "filename=$(filename)" >> passmang_config.sh
 	@echo -e "filepath=/usr/local/share/passmang/$(filename)" >> passmang_config.sh
-	sudo cp passmang_config.sh /etc/passmang/
+	sudo mv passmang_config.sh /etc/passmang/
 
 install: dependencies deploy_filestructure deploy_bin deploy_cfg deploy_passfile
 	sudo passmang encrypt 
@@ -32,7 +31,6 @@ install: dependencies deploy_filestructure deploy_bin deploy_cfg deploy_passfile
 
 uninstall: 
 	@read -rp "Last chance to Ctrl-C before passmang and your passwords are gone!" >> temp
-	@rm passmang_config.sh
 	sudo rm -r /usr/local/share/passmang
 	sudo rm /usr/local/bin/passmang
 	sudo rm /usr/local/bin/passmang_core
