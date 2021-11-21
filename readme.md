@@ -8,25 +8,25 @@ Passmang is a lightweight local cmd based password manager with built in AES enc
 
 ## Usage
 - Run `passmang` from your command line. You should see a list of commands you can run, also shown here. 
-      * Commands: 
-      * 1) passmang encrypt 
-      * 2) passmang decrypt
-      * 3) passmang get key
-      * 4) passmang del key
-      * 5) passmang mod key password
-      * 6) passmang add key password
-      * After each command you will be prompted for the master password. 
-      * 
-      * Command Details:
-      * 1) Encrypting a plaintext file (asks for masterpass)
-      * 2) Decrypting an encrypted file (asks for filepath, masterpass)
-      * 3) Getting a key-pass entry from a file (asks for filepath, masterpass, key)
-      * 4) Deleting a key-pass entry from a file (asks for filepath, masterpass, key)
-      * 5) Editing a key-pass entry from a file (asks for filepath, masterpass, key, password)
-      * 6) Adding a key-pass entry to a file (asks for filepath, masterpass, key, password
-      *
-      * Troubleshooting: 
-      * If for any reason you need to decrypt your file, execute command 2) below and your text file will show up as passfile_1
+    - Commands: 
+    - 1) passmang encrypt 
+    - 2) passmang decrypt
+    - 3) passmang get key
+    - 4) passmang del key
+    - 5) passmang mod key password
+    - 6) passmang add key password
+    - After each command you will be prompted for the master password. 
+    - 
+    - Command Details:
+    - 1) Encrypting a plaintext file (asks for masterpass)
+    - 2) Decrypting an encrypted file (asks for filepath, masterpass)
+    - 3) Getting a key-pass entry from a file (asks for filepath, masterpass, key)
+    - 4) Deleting a key-pass entry from a file (asks for filepath, masterpass, key)
+    - 5) Editing a key-pass entry from a file (asks for filepath, masterpass, key, password)
+    - 6) Adding a key-pass entry to a file (asks for filepath, masterpass, key, password
+    - 
+    - Troubleshooting: 
+    - If for any reason you need to decrypt your file, execute command 2) below and your text file will show up as passfile_1
 
 - In general, the flow is: `passmang add` a key-pass pair -> `passmang get` or `passmang mod` -> `passmang del` if needed
 - You should not need to regularly run `passmang encrypt` or `passmang decrypt`. They are there for troubleshooting, especially decrypt. 
