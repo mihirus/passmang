@@ -5,6 +5,8 @@
 !.gitignore
 !Makefile
 !main.cpp
+!lib
+!lib/**
 !passmang
 !readme.md
 !LICENSE
