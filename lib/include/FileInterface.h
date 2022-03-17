@@ -1,6 +1,12 @@
+
+// Interact with files
 #include <fstream>
 #include <ios>
+
+// General purpose string functionality
 #include <string>
+
+
 
 /*
 
@@ -20,6 +26,8 @@ class FileInterface {
     // Status functions indicate whether files have been opened and read into buffers
     bool passwordsBufferReady() { return passwords_buffer_ready_; }
     bool ivBufferReady() { return iv_buffer_ready_; }
+
+    ~FileInterface(); // Overwrites buffers with 0s
     
   private:
     std::filebuf passwords_filebuf_;  // filebuf object that operates on password file
@@ -27,11 +35,20 @@ class FileInterface {
 
     /*  Pointers to passwords and iv file buffers.
         Buffers should be dynamically allocated at runtime. */
-    char* passwords_buffer_;
-    char* iv_buffer_;
+    char* passwords_buffer_in_;
+    char* iv_buffer_in_;
 
-    bool passwords_buffer_ready_ = false;
-    bool iv_buffer_ready_ = false;
+    std::streamsize passwords_buffer_in_size_;
+    std::streamsize iv_buffer_in_size_;
+
+    char* passwords_buffer_out_;
+    char* iv_buffer_out_;
+
+    std::streamsize passwords_buffer_out_size_;
+    std::streamsize iv_buffer_out_size_;
+
+    bool passwords_buffer_in_ready_ = false;
+    bool iv_buffer_in_ready_ = false;
 
 }; // class FileInterface
 

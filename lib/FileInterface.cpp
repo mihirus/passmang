@@ -15,27 +15,37 @@ void FileInterface::configure(const std::string passwordsFilePath, const std::st
 
   // Gets number of available characters in each filebuf. If chars available, read into buf.
   // If in_avail does not work, increment through file until EOF
-  const std::streamsize passwords_file_size = passwords_filebuf_.in_avail();
-  if (passwords_file_size <= 0) {
+  const std::streamsize passwords_buffer_size_ = passwords_filebuf_.in_avail();
+  if (passwords_buffer_size_ <= 0) {
     // Passwords file may not exist
   } else {
 
-    passwords_buffer_ = new char [passwords_file_size];
-    for (int i = 0; i < passwords_file_size; i++) {
+    // Allocate passwords buffer with size of passwords file contents
+    passwords_buffer_ = new char [passwords_buffer_size_];
+
+    // Populate passwords buffer with passwords file contents
+    for (int i = 0; i < passwords_buffer_size_; i++) {
       passwords_buffer_[i] = passwords_filebuf_.sbumpc();
     }
+
+    // Buffer is ready
     passwords_buffer_ready_ = true;
   }
 
-  const std::streamsize iv_file_size = iv_filebuf_.in_avail();
-  if (iv_file_size <= 0) {
+  const std::streamsize iv_buffer_size_ = iv_filebuf_.in_avail();
+  if (iv_buffer_size_ <= 0) {
     // iv file may not exist
   } else {
 
-    iv_buffer_ = new char [iv_file_size];
-    for (int i = 0; i < iv_file_size; i++) {
+    // Allocate iv buffer with size of iv file contents
+    iv_buffer_ = new char [iv_buffer_size_];
+
+    // Populate iv buffer with iv file contents
+    for (int i = 0; i < iv_buffer_size_; i++) {
       iv_buffer_[i] = iv_filebuf_.sbumpc();
     } 
+
+    // Buffer is ready
     iv_buffer_ready_ = true;
   }
   
