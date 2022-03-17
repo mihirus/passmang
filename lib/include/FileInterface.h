@@ -1,18 +1,6 @@
-
-// Interact with files
 #include <fstream>
 #include <ios>
-
-// General purpose string functionality
 #include <string>
-
-
-
-/*
-
-Class for compact reads/writes of files.
-
-*/
 
 namespace passmang {
 
@@ -30,23 +18,27 @@ class FileInterface {
     ~FileInterface(); // Overwrites buffers with 0s
     
   private:
-    std::filebuf passwords_filebuf_;  // filebuf object that operates on password file
-    std::filebuf iv_filebuf_;         // filebuf object that operates on initialization vector file 
+    // filebuf objects that do read/write on files
+    std::filebuf passwords_filebuf_; 
+    std::filebuf iv_filebuf_;
 
-    /*  Pointers to passwords and iv file buffers.
-        Buffers should be dynamically allocated at runtime. */
+    // Pointers to input file buffers
     char* passwords_buffer_in_;
     char* iv_buffer_in_;
 
+    // Sizes of input file buffers
     std::streamsize passwords_buffer_in_size_;
     std::streamsize iv_buffer_in_size_;
 
+    // Pointers to output file buffers
     char* passwords_buffer_out_;
     char* iv_buffer_out_;
 
+    // Sizes of output file buffers
     std::streamsize passwords_buffer_out_size_;
     std::streamsize iv_buffer_out_size_;
 
+    // Status flags to indicate that input buffers have been populated with file contents
     bool passwords_buffer_in_ready_ = false;
     bool iv_buffer_in_ready_ = false;
 
