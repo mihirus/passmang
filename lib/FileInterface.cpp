@@ -1,19 +1,25 @@
 #include "include/FileInterface.h"
 
+#define FILEBUF_NULLPTR static_cast<std::filebuf*>(nullptr)
+
 namespace passmang {
 
 void FileInterface::configure(const std::string passwordsFilePath, const std::string ivFilePath) {
+
+  std::filebuf* passwords_filebuf_status = FILEBUF_NULLPTR;
+  std::filebuf* iv_filebuf_status = FILEBUF_NULLPTR;
  
   // Call open if filebufs are not already open 
   if (!passwords_filebuf_.is_open()) {
-    const char* passwords_filebuf_status = passwords_filebuf_.open(passwordsFilePath, std::ios_base::binary);
+    passwords_filebuf_status = passwords_filebuf_.open(passwordsFilePath, std::ios_base::binary);
   }
 
   if (!iv_filebuf_.is_open()) {
-    const char* passwords_filebuf_status = iv_filebuf_.open(ivFilePath, std::ios_base::binary);
+    iv_filebuf_status = iv_filebuf_.open(ivFilePath, std::ios_base::binary);
   }
 
-  if (passwords_filebuf_status == nullptr || iv_filebuf_status == nullptr) {
+  if (passwords_filebuf_status == FILEBUF_NULLPTR ||
+      iv_filebuf_status == FILEBUF_NULLPTR) {
     return; // One of the files does not exist
   }
 
