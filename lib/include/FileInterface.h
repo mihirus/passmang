@@ -8,12 +8,17 @@ class FileInterface {
 
   public:
 
-    // Opens filebufs and reads file contents into corresponding buffers
+    // Opens filebufs and reads file contents into corresponding buffers.
     void configure(const std::string passwordsFilePath, const std::string ivFilePath);
 
     // Status functions indicate whether files have been opened and read into buffers
     bool passwordsBufferReady() { return passwords_buffer_ready_; }
     bool ivBufferReady() { return iv_buffer_ready_; }
+
+    // Standard passmang functions. Will zeroize char arrays with 0s when done.
+    void add(char* key, const int key_size, char* pass, const int pass_size);
+    void del(char* key, const int key_size);
+    void mod(char* key, const int key_size, char* pass, const int pass_size);
 
     ~FileInterface(); // Overwrites buffers with 0s
     
