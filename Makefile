@@ -1,11 +1,21 @@
 SHELL := /bin/bash
 filename=passfile
 
+.PHONY: lib
+
 dependencies: 
 	sudo apt update
 	sudo apt install xclip 
 
-build: 
+clean:
+	-rm -r build
+	mkdir build
+
+lib:
+	g++ -c -o build/FileInterface.h.o lib/include/FileInterface.h
+	g++ -c -o build/FileInterface.o lib/FileInterface.cpp
+
+build: clean lib
 	g++ -DNDEBUG -g3 -O2 -Wall -Wextra -o passmang_core main.cpp -l:libcryptopp.a
 
 deploy_bin: build
