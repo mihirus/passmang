@@ -26,6 +26,8 @@ class FileInterface {
   
   void decrypt();
 
+  void allocate_input_buffer(const std::string filepath, std::filebuf& filebuf, char* buffer, std::streamsize& size, bool& flag);
+
   // filebuf objects that do read/write on files
   std::filebuf passwords_filebuf_; 
   std::filebuf iv_filebuf_;
