@@ -4,7 +4,7 @@
 
 namespace passmang {
 
-void FileInterface::configure(const std::string passwordsFilePath, const std::string ivFilePath) {
+void FileInterface::initializeBuffer(const std::string passwordsFilePath, const std::string ivFilePath) {
 
   std::filebuf* passwords_filebuf_status = FILEBUF_NULLPTR;
   std::filebuf* iv_filebuf_status = FILEBUF_NULLPTR;
@@ -25,17 +25,19 @@ void FileInterface::configure(const std::string passwordsFilePath, const std::st
 
   // Gets number of available characters in each filebuf. If chars available, read into buf.
   // If in_avail does not work, increment through file until EOF
-  const std::streamsize passwords_buffer_in_size_ = passwords_filebuf_.in_avail();
-  if (passwords_buffer_in_size_ <= 0) {
+  const std::streamsize passwords_buffer_ciphertext_in_size_ = passwords_filebuf_.in_avail();
+  if (passwords_buffer_ciphertext_in_size_ <= 0) {
     // Passwords file may not exist
   } else {
 
-    // Allocate passwords buffer with size of passwords file contents
-    passwords_buffer_in_ = new char [passwords_buffer_in_size_];
+    /* Allocate passwords buffer with size of passwords file contents.
+    Note that buffer size will always be a multiple of AES::BLOCKSIZE (16 bytes).
+    Therefore, the encrypted file will always be at least as large as the decrypted file. */
+    passwords_buffer_ciphertext_in_ = new char [passwords_buffer_ciphertext_in_size_];
 
     // Populate passwords buffer with passwords file contents
-    for (int i = 0; i < passwords_buffer_in_size_; i++) {
-      passwords_buffer_in_[i] = passwords_filebuf_.sbumpc();
+    for (int i = 0; i < passwords_buffer_ciphertext_in_size_; i++) {
+      passwords_buffer_ciphertext_in_[i] = passwords_filebuf_.sbumpc();
     }
 
     // Buffer is ready
@@ -43,16 +45,16 @@ void FileInterface::configure(const std::string passwordsFilePath, const std::st
   }
 
   const std::streamsize iv_buffer_in_size_ = iv_filebuf_.in_avail();
-  if (iv_buffer_in_size_ <= 0) {
+  if (iv_buffer_ciphertext_in_size_ <= 0) {
     // iv file may not exist
   } else {
 
     // Allocate iv buffer with size of iv file contents
-    iv_buffer_in_ = new char [iv_buffer_in_size_];
+    iv_buffer_ciphertext_in_ = new char [iv_buffer_ciphertext_in_size_];
 
     // Populate iv buffer with iv file contents
-    for (int i = 0; i < iv_buffer_in_size_; i++) {
-      iv_buffer_in_[i] = iv_filebuf_.sbumpc();
+    for (int i = 0; i < iv_buffer_ciphertext_in_size_; i++) {
+      iv_buffer_ciphertext_in_[i] = iv_filebuf_.sbumpc();
     } 
 
     // Buffer is ready
