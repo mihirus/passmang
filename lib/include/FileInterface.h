@@ -8,8 +8,8 @@ class FileInterface {
 
   public:
 
-    // Opens filebufs and reads file contents into corresponding buffers.
-    void configure(const std::string passwordsFilePath, const std::string ivFilePath);
+    // Opens filebufs and reads encrypted file contents into corresponding buffers.
+    void populateBufferIn(const std::string passwordsFilePath, const std::string ivFilePath);
 
     // Status functions indicate whether files have been opened and read into buffers
     bool passwordsBufferReady() { return passwords_buffer_in_ready_; }
@@ -35,6 +35,14 @@ class FileInterface {
     std::streamsize passwords_buffer_in_size_;
     std::streamsize iv_buffer_in_size_;
 
+    // Pointers to intermediate file buffers
+    char* passwords_buffer_intermediate_;
+    char* iv_buffer_intermediate_;
+
+    // Sizes of intermediate file buffers
+    std::streamsize passwords_buffer_intermediate_size_;
+    std::streamsize iv_buffer_intermediate_size_;
+
     // Pointers to output file buffers
     char* passwords_buffer_out_;
     char* iv_buffer_out_;
@@ -43,7 +51,7 @@ class FileInterface {
     std::streamsize passwords_buffer_out_size_;
     std::streamsize iv_buffer_out_size_;
 
-    // Status flags to indicate that input buffers have been populated with file contents
+    // Status flags to indicate that input buffers have been populated with encrypted file contents
     bool passwords_buffer_in_ready_ = false;
     bool iv_buffer_in_ready_ = false;
 
