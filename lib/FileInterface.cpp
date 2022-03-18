@@ -6,13 +6,25 @@
 namespace passmang {
 
 
-void FileInterface::initializeBuffer(const std::string passwordsFilePath, const std::string ivFilePath) {
+void FileInterface::initializeBuffers(const std::string passwordsFilePath, const std::string ivFilePath) {
 
-  // Allocate passwords buffer, set size, flag
+  // Allocate ciphertext in passwords buffer, set size & flag
   allocate_input_buffer(passwordsFilePath, passwords_filebuf_, passwords_buffer_ciphertext_in_, passwords_buffer_ciphertext_in_size_, passwords_buffer_in_ready_); 
 
-  // Allocate iv buffer, set size, flag
-  allocate_input_buffer(ivFilePath, iv_filebuf_, iv_buffer_ciphertext_in_, iv_buffer_ciphertext_in_size_, iv_buffer_in_ready_); 
+  // Allocate ciphertext in iv buffer, set size & flag
+  allocate_input_buffer(ivFilePath, iv_filebuf_, iv_buffer_ciphertext_in_, iv_buffer_ciphertext_in_size_, iv_buffer_in_ready_);
+
+  // Allocate plaintext in buffers. Because of AES block sizing requirements,
+  // ciphertext data size is always at least as great as plaintext data size. Therefore,
+  // plaintext buffer can be made the size of the ciphertext buffer.
+
+  if (passwords_buffer_in_ready_) {
+    passwords_buffer_plaintext_ = new char [static_cast<int>(passwords_buffer_ciphertext_in_size_)];  
+  }  
+
+  if (iv_buffer_in_ready_) {
+    iv_buffer_plaintext_ = new char [static_cast<int>(iv_buffer_ciphertext_in_size_)];  
+  }  
 
 }
 

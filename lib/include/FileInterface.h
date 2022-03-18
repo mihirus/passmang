@@ -9,7 +9,7 @@ class FileInterface {
  public:
 
   // Opens filebufs and reads encrypted file contents into corresponding buffers.
-  void initializeBuffer(const std::string passwordsFilePath, const std::string ivFilePath);
+  void initializeBuffers(const std::string passwordsFilePath, const std::string ivFilePath);
 
   // Status functions indicate whether files have been opened and read into buffers
   bool passwordsBufferReady() { return passwords_buffer_in_ready_; }
@@ -35,31 +35,25 @@ class FileInterface {
   // Pointers to ciphertext buffers
   char* passwords_buffer_ciphertext_in_;
   char* iv_buffer_ciphertext_in_;
-
-  // Sizes of ciphertext buffers
-  std::streamsize passwords_buffer_ciphertext_in_size_;
-  std::streamsize iv_buffer_ciphertext_in_size_;
-
   // Pointers to plaintext buffers
   char* passwords_buffer_plaintext_;
   char* iv_buffer_plaintext_;
-
-  // Sizes of plaintext buffers
-  std::streamsize passwords_buffer_plaintext_size_;
-  std::streamsize iv_buffer_plaintext_size_;
-
   // Pointers to transformed plaintext buffers
   char* passwords_buffer_transformed_plaintext_;
   char* iv_buffer_transformed_plaintext_;
-
-  // Sizes of decrypted file buffers
-  std::streamsize passwords_buffer_transformed_plaintext_size_;
-  std::streamsize iv_buffer_transformed_plaintext_size_;
-
   // Pointers to output file buffers
   char* passwords_buffer_ciphertext_out_;
   char* iv_buffer_ciphertext_out_;
 
+  // Sizes of ciphertext buffers
+  std::streamsize passwords_buffer_ciphertext_in_size_;
+  std::streamsize iv_buffer_ciphertext_in_size_;
+  // Sizes of plaintext buffers
+  std::streamsize passwords_buffer_plaintext_size_;
+  std::streamsize iv_buffer_plaintext_size_;
+  // Sizes of decrypted file buffers
+  std::streamsize passwords_buffer_transformed_plaintext_size_;
+  std::streamsize iv_buffer_transformed_plaintext_size_;
   // Sizes of output file buffers
   std::streamsize passwords_buffer_ciphertext_out_size_;
   std::streamsize iv_buffer_ciphertext_out_size_;
