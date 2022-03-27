@@ -1,5 +1,26 @@
 #include "include/FileInterface.h"
 
+#include "assert.h"
+#include "cryptopp/aes.h"
+#include "cryptopp/ccm.h"
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/filters.h"
+#include "cryptopp/hex.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/osrng.h"
+#include "cryptopp/secblock.h"
+
+using CryptoPP::AES;
+using CryptoPP::AutoSeededRandomPool;
+using CryptoPP::CBC_Mode;
+using CryptoPP::Exception;
+using CryptoPP::HexDecoder;
+using CryptoPP::HexEncoder;
+using CryptoPP::HKDF;
+using CryptoPP::StreamTransformationFilter;
+using CryptoPP::StringSink;
+using CryptoPP::StringSource;
+
 #define FILEBUF_NULLPTR static_cast<std::filebuf*>(nullptr)
 #define CHAR_NULLPTR    static_cast<char*>(nullptr)
 
@@ -22,13 +43,22 @@ void FileInterface::initializeBuffers(const std::string passwordsFilePath, const
     passwords_buffer_plaintext_ = new char [static_cast<int>(passwords_buffer_ciphertext_in_size_)];  
   }  
 
-  if (iv_buffer_in_ready_) {
-    iv_buffer_plaintext_ = new char [static_cast<int>(iv_buffer_ciphertext_in_size_)];  
-  }  
+}
+
+void FileInterface::add(char* key, const int key_size, char* pass, const int pass_size) {
+   
+}
+
+void FileInterface::del(char* key, const int key_size) {
 
 }
 
-void allocate_input_buffer(const std::string filepath, std::filebuf& filebuf, char* buffer, std::streamsize& size, bool& flag) {
+void FileInterface::mod(char* key, const int key_size, char* pass, const int pass_size) {
+
+}
+
+
+void FileInterface::populate_input_buffer(const std::string filepath, std::filebuf& filebuf, char* buffer, std::streamsize& size, bool& flag) {
 
   std::filebuf* filebuf_status = FILEBUF_NULLPTR;
   
@@ -65,16 +95,42 @@ void allocate_input_buffer(const std::string filepath, std::filebuf& filebuf, ch
   }
 }
 
-void FileInterface::add(char* key, const int key_size, char* pass, const int pass_size) {
+void FileInterface::populate_plaintext_buffer(char* password, const int password_size) {
+  if (passwords_buffer_in_ready_ && iv_buffer_in_ready_) {
 
-}
+    // Allocate 
+    CryptoPP::byte derived_key[AES::DEFAULT_KEYLENGTH];
+    CryptoPP::HKDF<CryptoPP::SHA1> hkdf;    
+  
+    // Derive actual AES key from initialization vector & password
+    hkdf.DeriveKey(derived_key,
+                    sizeof(derived_key),
+                    static_cast<const CryptoPP::byte*>(password),
+                    password_size,
+                    static_cast<const CryptoPP::byte*>(iv_buffer_ciphertext_in_));
 
-void FileInterface::del(char* key, const int key_size) {
+    try {
+      CBC_Mode<AES>::Decryption d; 
+      d.SetKeyWithIV(derived_key,
+                      sizeof(derived_key), 
+                      static_cast<const CryptoPP::byte*>(iv_buffer_ciphertext_in_)
+      );
+      
+      /*  Pass ciphertext through transformation filter
+          with ciphertext buffer as source and plaintext buffer as sink. */
+      StringSource ss(*passwords_buffer_ciphertext_in,
+                        true,
+                        new StreamTransformationFilter(d,
+                            new StringSink(passwords_buffer_plaintext_)
+                        )
+      );
+    } catch (const CryptoPP::Exception& e) {
+      // Decryption unsuccessful
+    }
 
-}
+  } else {
 
-void FileInterface::mod(char* key, const int key_size, char* pass, const int pass_size) {
-
+  }
 }
 
 }; // namespace passmang
