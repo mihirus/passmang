@@ -30,10 +30,10 @@ namespace passmang {
 void FileInterface::initializeBuffers(const std::string passwordsFilePath, const std::string ivFilePath) {
 
   // Allocate ciphertext in passwords buffer, set size & flag
-  allocate_input_buffer(passwordsFilePath, passwords_filebuf_, passwords_buffer_ciphertext_in_, passwords_buffer_ciphertext_in_size_, passwords_buffer_in_ready_); 
+  populate_input_buffer(passwordsFilePath, passwords_filebuf_, passwords_buffer_ciphertext_in_, passwords_buffer_ciphertext_in_size_, passwords_buffer_in_ready_); 
 
   // Allocate ciphertext in iv buffer, set size & flag
-  allocate_input_buffer(ivFilePath, iv_filebuf_, iv_buffer_ciphertext_in_, iv_buffer_ciphertext_in_size_, iv_buffer_in_ready_);
+  populate_input_buffer(ivFilePath, iv_filebuf_, iv_buffer_ciphertext_in_, iv_buffer_ciphertext_in_size_, iv_buffer_in_ready_);
 
   // Allocate plaintext in buffers. Because of AES block sizing requirements,
   // ciphertext data size is always at least as great as plaintext data size. Therefore,
@@ -98,7 +98,7 @@ void FileInterface::populate_input_buffer(const std::string filepath, std::fileb
 void FileInterface::populate_plaintext_buffer(char* password, const int password_size) {
   if (passwords_buffer_in_ready_ && iv_buffer_in_ready_) {
 
-    // Allocate 
+    // Instantiate derived key and key deriver objects
     CryptoPP::byte derived_key[AES::DEFAULT_KEYLENGTH];
     CryptoPP::HKDF<CryptoPP::SHA1> hkdf;    
   
@@ -118,10 +118,10 @@ void FileInterface::populate_plaintext_buffer(char* password, const int password
       
       /*  Pass ciphertext through transformation filter
           with ciphertext buffer as source and plaintext buffer as sink. */
-      StringSource ss(*passwords_buffer_ciphertext_in,
+      StringSource ss(*passwords_buffer_ciphertext_in_,
                         true,
                         new StreamTransformationFilter(d,
-                            new StringSink(passwords_buffer_plaintext_)
+                            new StringSink(*passwords_buffer_plaintext_)
                         )
       );
     } catch (const CryptoPP::Exception& e) {
